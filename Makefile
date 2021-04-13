@@ -13,11 +13,11 @@ SRC=$(wildcard $(SRC_DIR)/*.cpp )
 OBJS=$(patsubst $(SRC_DIR)/%.cpp,$(DEBUG_DIR)/%.o,$(SRC))
 
 
-TARGET=netrs485
+TARGET=tmai
 
 INSTALL_PATH ?= .
 
-ARCH ?=
+ARCH ?= mipsel-openwrt-linux-
 
 CC=$(ARCH)gcc
 CPP=$(ARCH)g++

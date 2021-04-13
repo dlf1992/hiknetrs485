@@ -54,7 +54,7 @@ void initcameraparam()
 	memset(&back_camerainfo,0,sizeof(CAMERAINFO));
 	string frontip,frontusrname,frontpasswd;
 	string backip,backusrname,backpasswd;
-	const char* inifile = "camera.ini";
+	const char* inifile = "/app/camera.ini";
 	if(initInifile(inifile))
 	{
 		pIniFile->GetStringValue("FRONTCAMERA","IP",&frontip);
@@ -68,10 +68,10 @@ void initcameraparam()
 	{
 		frontip = "192.168.1.64";
 		frontusrname = "admin";
-		frontpasswd = "dlf106456";
+		frontpasswd = "hikvision123";
 		backip = "192.168.1.65";
 		backusrname = "admin";
-		backpasswd = "dlf106456";		
+		backpasswd = "hikvision123";		
 	}
 	printf("frontip = %s\nfrontusrname = %s\nfrontpasswd = %s\n",frontip.c_str(),frontusrname.c_str(),frontpasswd.c_str());
 	printf("backip = %s\nbackusrname = %s\nbackpasswd = %s\n",backip.c_str(),backusrname.c_str(),backpasswd.c_str());
@@ -104,6 +104,7 @@ void getpdcnum(char* ip,char* usrname,char* passwd,int doorflag)
 static void *getfrontnum(void *arg)
 {
 	prctl(PR_SET_NAME,"getfrontnum");
+	static unsigned int count = 0;
 	while(true)
 	{
 		char m_ip[16] = {0};
@@ -118,6 +119,11 @@ static void *getfrontnum(void *arg)
 		snprintf(tmp,sizeof(tmp),"getfrontnum,m_ip = %s,m_usrname = %s,m_passwd = %s.",m_ip,m_usrname,m_passwd);
 		LOGRECORD(tmp);
 		getpdcnum(m_ip,m_usrname,m_passwd,0);
+		memset(tmp,0,sizeof(tmp));
+		sprintf(tmp,"getfrontnum count = %d",count);
+		LOGRECORD(tmp);
+		count++;	
+		sleep(5);
 	}
 	//printf("getfrontnum\n");
 	return NULL;
@@ -125,6 +131,7 @@ static void *getfrontnum(void *arg)
 static void *getbacknum(void *arg)
 {
 	prctl(PR_SET_NAME,"getbacknum");
+	static unsigned int count = 0;
 	while(true)
 	{
 		char m_ip[16] = {0};
@@ -138,6 +145,11 @@ static void *getbacknum(void *arg)
 		snprintf(tmp,sizeof(tmp),"getbacknum,m_ip = %s,m_usrname = %s,m_passwd = %s.",m_ip,m_usrname,m_passwd);
 		LOGRECORD(tmp);
 		getpdcnum(m_ip,m_usrname,m_passwd,1);
+		memset(tmp,0,sizeof(tmp));
+		sprintf(tmp,"getbacknum count = %d",count);
+		LOGRECORD(tmp);
+		count++;	
+		sleep(5);		
 	}
 	//printf("getbacknum\n");
 	return NULL;
@@ -157,9 +169,9 @@ void clearbacknum()
 	char m_ip[16] = {0};
 	char m_usrname[32] = {0};
 	char m_passwd[32] = {0};
-	memcpy(&m_ip,&(front_camerainfo.cameraip),strlen(front_camerainfo.cameraip));	
-	memcpy(&m_usrname,&(front_camerainfo.usrname),strlen(front_camerainfo.usrname));
-	memcpy(&m_passwd,&(front_camerainfo.passwd),strlen(front_camerainfo.passwd));
+	memcpy(&m_ip,&(back_camerainfo.cameraip),strlen(back_camerainfo.cameraip));	
+	memcpy(&m_usrname,&(back_camerainfo.usrname),strlen(back_camerainfo.usrname));
+	memcpy(&m_passwd,&(back_camerainfo.passwd),strlen(back_camerainfo.passwd));
 	clearpdcnum(m_ip,m_usrname,m_passwd);
 }
 void  clearnum()
@@ -256,9 +268,15 @@ int main(int argc, char *argv[])
 	//printf("thread start.\n");
 	//线程启动
 	ThreadStart();
+	static unsigned int count = 0;
+	char tmp[64];
 	while(1)
 	{
 		pthreadmanage->RestartThread();
+		memset(tmp,0,sizeof(tmp));
+		sprintf(tmp,"main count = %d",count);
+		LOGRECORD(tmp);
+		count++;		
 		sleep(10);
 	}		
 	return 0;

@@ -1,0 +1,31 @@
+#!/bin/sh /etc/rc.common
+#---/etc/init.d/isinit
+START=99
+USE_PROCD=1
+
+start_service () {
+    ethmode lllll
+    echo 11 > /sys/class/gpio/export
+    echo 37 > /sys/class/gpio/export
+    echo out > /sys/class/gpio/gpio11/direction
+    echo out > /sys/class/gpio/gpio37/direction
+    echo 0 > /sys/class/gpio/gpio11/value
+    echo 0 > /sys/class/gpio/gpio37/value
+    
+    procd_open_instance
+    procd_set_param respawn
+    procd_set_param command /app/tmai
+    procd_set_param limits core="unlimited"
+    procd_close_instane
+}
+
+stop_service() {
+    echo 'tmai stops!'
+}
+
+restart() {
+    stop
+    start
+}
+
+

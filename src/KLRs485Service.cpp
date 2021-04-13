@@ -142,7 +142,7 @@ void KLRs485Service::Process()
     if (rlen > 0)
     {
 		XnUInt32 timeStamp = GetTimeMs();
-		#if 0
+		#if 1
 		printf("\nread 485 data:len=%d\n", rlen);
 		for(int i = 0; i < rlen; i++)
 		{
@@ -483,7 +483,7 @@ XnUInt8 KLRs485Service::ProcClearCountReq(const XnUInt8 *data, XnUInt32 len)
 
 	if(CRC16_isr((XnUInt8*)data, len-2) == pClearCountReq->body.crc16 && pClearCountReq->head.cmd == CMD_CLIEAR_COUNT)
 	{		
-        if(pClearCountReq->head.door_id == 0)
+        //if(pClearCountReq->head.door_id == 0)
 		{
 			printf("Clear Count front door.\n");
 			LOGRECORD("Clear Count front door");
@@ -495,16 +495,16 @@ XnUInt8 KLRs485Service::ProcClearCountReq(const XnUInt8 *data, XnUInt32 len)
 			memcpy(&m_passwd,&(front_camerainfo.passwd),strlen(front_camerainfo.passwd));	
 			clearpdcnum(m_ip,m_usrname,m_passwd);			
 		}
-		else
+		//else
 		{
 			printf("Clear Count back door.\n");
 			LOGRECORD("Clear Count back door");
 			char m_ip[16] = {0};
 			char m_usrname[32] = {0};
 			char m_passwd[32] = {0};
-			memcpy(&m_ip,&(front_camerainfo.cameraip),strlen(front_camerainfo.cameraip));	
-			memcpy(&m_usrname,&(front_camerainfo.usrname),strlen(front_camerainfo.usrname));
-			memcpy(&m_passwd,&(front_camerainfo.passwd),strlen(front_camerainfo.passwd));
+			memcpy(&m_ip,&(back_camerainfo.cameraip),strlen(back_camerainfo.cameraip));	
+			memcpy(&m_usrname,&(back_camerainfo.usrname),strlen(back_camerainfo.usrname));
+			memcpy(&m_passwd,&(back_camerainfo.passwd),strlen(back_camerainfo.passwd));
 			clearpdcnum(m_ip,m_usrname,m_passwd);
 		}	
 	
